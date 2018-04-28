@@ -10,7 +10,7 @@ class TimesUp extends Component {
     return (
       <span>
         <ReactModal
-          isOpen={this.props.gameTimer <= 0}
+          isOpen={this.props.gameTimer <= 0 && this.props.view === 'gameRoom'}
           contentLabel="SignUp Modal"
           className="Modal container"
           overlayClassName="Overlay"

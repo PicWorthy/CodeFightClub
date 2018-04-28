@@ -9,7 +9,7 @@ import Header from './components/header.jsx';
 import Body from './components/body.jsx';
 import Footer from './components/footer.jsx';
 import ChatBox from './components/chatBox.jsx';
-import { subscribeToSocket, sendMessage, subscribeToTimerSocket} from './socket/api.jsx';
+import { subscribeToSocket, sendMessage, subscribeToTimerSocket, getDateTimerSocket} from './socket/api.jsx';
 
 Modal.setAppElement('#app');
 
@@ -26,7 +26,7 @@ class App extends Component {
       messages: [],
       userMessage: '',
       timerTillNextGame: ' ',
-      gameTimer: 5,
+      gameTimer: 30,
       // END TESTING SOCKET.IO
       view: 'prompt',
     };
@@ -56,6 +56,7 @@ class App extends Component {
           this.setState({messages});
         });
         
+        getDateTimerSocket();
         subscribeToTimerSocket(this.updateTimer);
         // END TESTING SOCKET.IO
       }
@@ -113,15 +114,15 @@ class App extends Component {
     let secondsTillNextGame = 60 - (new Date(date).getSeconds());
     this.setState({timerTillNextGame: secondsTillNextGame});
     let timer = setInterval(() => {
-      this.setState({timerTillNextGame: secondsTillNextGame});
       secondsTillNextGame--;
-      if (secondsTillNextGame < 0) {
+      this.setState({timerTillNextGame: secondsTillNextGame});
+      if (secondsTillNextGame <= -1) {
         clearInterval(timer);
         if (this.state.view === 'waitingRoom') {
           this.setState({view: 'gameRoom'})
           this.updateGameTimer();
         }
-        setTimeout(subscribeToTimerSocket(this.updateTimer), 1000);
+        getDateTimerSocket();
       }
     }, 1000)
   }
@@ -133,7 +134,7 @@ class App extends Component {
       secondsTillEndGame--;
       if (secondsTillEndGame < 0) {
         clearInterval(gameTimer);
-        setTimeout(() => {this.setState({gameTimer: 5})}, 2000)
+        setTimeout(() => {this.setState({gameTimer: 30})}, 2000)
       }
     }, 1000)
   }

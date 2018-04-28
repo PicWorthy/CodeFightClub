@@ -21,10 +21,11 @@ export const sendMessage = (message) => {
 const timerSocket = io('/timer');
 
 export const subscribeToTimerSocket = (cb) => {
-  timerSocket.emit('getDate');
-
   timerSocket.on('date',(date) => {
-    console.log(date);
     cb(date);
   })
+}
+
+export const getDateTimerSocket = () => {
+  timerSocket.emit('getDate');
 }

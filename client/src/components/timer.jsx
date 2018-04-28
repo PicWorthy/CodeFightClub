@@ -9,14 +9,14 @@ const Timer = (props) => {
         <button>{props.gameTimer}</button>
       </span>
     );
-  } else if (props.timerTillNextGame > 0 && props.view === 'waitingRoom') {
+  } else if (props.timerTillNextGame >= 0 && props.view === 'waitingRoom') {
     timer = (
       <span className="container">
         <span>Next Fight In: </span>
         <button>{props.timerTillNextGame}</button>
       </span>
     );
-  } else if (props.timerTillNextGame > 0) {
+  } else if (props.timerTillNextGame >= 0) {
     timer = (
       <span className="container">
         <span>Next Fight In: </span>
