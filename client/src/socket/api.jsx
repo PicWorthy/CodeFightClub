@@ -24,10 +24,6 @@ export const sendMessage = (message) => {
 const timerSocket = io('/timer');
 
 export const subscribeToTimerSocket = (cb) => {
-  timerSocket.on('test', () => {
-    console.log('time namespace works');
-  })
-
   timerSocket.emit('getDate');
 
   timerSocket.on('date',(date) => {

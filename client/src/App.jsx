@@ -25,7 +25,8 @@ class App extends Component {
       // for chat
       messages: [],
       userMessage: '',
-      timer: ' ',
+      timerTillNextGame: ' ',
+      gameTimer: 5,
       // END TESTING SOCKET.IO
       view: 'prompt',
     };
@@ -35,7 +36,7 @@ class App extends Component {
     this.updateTimer = this.updateTimer.bind(this);
     // END TESTING SOCKET.IO
   }
-
+  
   //sets the state of the username when a user is logged in
   componentWillMount() {
     $.get('/isLoggedIn', function(data) {
@@ -54,7 +55,7 @@ class App extends Component {
           messages.push(message);
           this.setState({messages});
         });
-
+        
         subscribeToTimerSocket(this.updateTimer);
         // END TESTING SOCKET.IO
       }
@@ -106,67 +107,86 @@ class App extends Component {
   }
 
   updateTimer(date) {
-    let secondsTillNewGame = 60 - (new Date(date).getSeconds());
+    let secondsTillNextGame = 60 - (new Date(date).getSeconds());
+    this.setState({timerTillNextGame: secondsTillNextGame});
     let timer = setInterval(() => {
-      this.setState({timer: secondsTillNewGame})
-      secondsTillNewGame--;
-      if (secondsTillNewGame < 0) {
+      this.setState({timerTillNextGame: secondsTillNextGame});
+      secondsTillNextGame--;
+      if (secondsTillNextGame < 0) {
         clearInterval(timer);
-      } 
+        this.updateGameTimer();
+        this.setState({view: 'prompt'})
+      }
+    }, 1000)
+  }
+
+  updateGameTimer() {
+    let secondsTillEndGame = this.state.gameTimer;
+    let gameTimer = setInterval(() => {
+      this.setState({gameTimer: secondsTillEndGame});
+      secondsTillEndGame--;
+      if (secondsTillEndGame < 0) {
+        clearInterval(gameTimer);
+      }
     }, 1000)
   }
   // END TESTING SOCKET.IO
 
   render () {
     // TESTING ChatBox
-    return (
-      <ChatBox 
-        messages={ this.state.messages }
-        userMessage={ this.state.userMessage }
-        handleInputChange={ this.state.handleInputChangeChat }
-        handleSubmit={ this.state.handleSubmit }
-      />
-    )
+    // return (
+    //   <ChatBox 
+    //     messages={ this.state.messages }
+    //     userMessage={ this.state.userMessage }
+    //     handleInputChange={ this.state.handleInputChangeChat }
+    //     handleSubmit={ this.state.handleSubmit }
+    //   />
+    // )
 
     // END TESTING CHatbox
 
     // TESTING SOCKET.IO
     const messages = this.state.messages.map(message => <li>{ message }</li>);
-    
-    return (
-      <div style={ {backgroundColor: 'black'} }>
-      <p>Next Battle In: {this.state.timer}</p>
-        <ul className="messages">
-          { messages }
-        </ul>
-        <form action="">
-          <input 
-            name="message"
-            type="text" 
-            className="m"
-            placeholder="send a message"
-            value={ this.state.userMessage }
-            onChange={ this.handleInputChangeChat }
-          />
-          <button 
-            className="send-button"
-            onClick={ this.handleSubmit }  
-          >
-            Send
-          </button>
-        </form>
-      </div>
-    )
+
+    // return (
+    //   <div style={ {backgroundColor: 'black'} }>
+    //   <p>Next Fight In: {this.state.timer}</p>
+    //     <button>
+    //       Join Fight
+    //     </button>
+    //     <ul className="messages">
+    //       { messages }
+    //     </ul>
+    //     <form action="">
+    //       <input 
+    //         name="message"
+    //         type="text" 
+    //         className="m"
+    //         placeholder="send a message"
+    //         value={ this.state.userMessage }
+    //         onChange={ this.handleInputChange }
+    //       />
+    //       <button 
+    //         className="send-button"
+    //         onClick={ this.handleSubmit }  
+    //       >
+    //         Send
+    //       </button>
+    //     </form>
+    //   </div>
+    // )
 
     // END TESTING SOCKET.IO
     return (
       <div className="container fullh fullw column">
         <Header
-          user={ this.state.user }
-          updateUser={ this.setUser.bind(this) }
-          logout={ this.logout.bind(this) }
-          changeView={ this.changeView.bind(this) }
-          view={ this.state.view }
+          user={this.state.user}
+          updateUser={this.setUser.bind(this)}
+          logout={this.logout.bind(this)}
+          changeView={this.changeView.bind(this)}
+          view={this.state.view}
+          timerTillNextGame={this.state.timerTillNextGame}
+          gameTimer={this.state.gameTimer}
         />
         <Body
           isLoggedIn={ !!this.state.user.username }

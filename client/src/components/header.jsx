@@ -2,6 +2,7 @@ import React from 'react';
 import SignUp from './signup.jsx';
 import Login from './login.jsx';
 import User from './user.jsx';
+import Timer from './timer.jsx';
 //direct child of App
 
 
@@ -16,8 +17,18 @@ const Header = function(props) {
         <img src="BrandonStinks.png" alt="BrandonStinks" height="90px" width="150px" />
       </div>
         { !!props.user.username
-          ? <div className="container row" id="user"><User user={props.user} logout={props.logout} view={props.view} changeView={props.changeView} /></div>
-          : <div className="container row" id="user"><SignUp setUsername={props.updateUser} /> <Login setUsername={props.updateUser} /></div> }
+          ? <div className="container row" id="user">
+              <Timer 
+                timerTillNextGame={props.timerTillNextGame} 
+                gameTimer={props.gameTimer} 
+                view={props.view} 
+                changeView={props.changeView} />
+              <User user={props.user} logout={props.logout} view={props.view} changeView={props.changeView} />
+            </div>
+          : <div className="container row" id="user">
+              <SignUp setUsername={props.updateUser} />
+              <Login setUsername={props.updateUser} />
+            </div> }
     </header>
   );
 }

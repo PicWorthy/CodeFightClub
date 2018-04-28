@@ -67,7 +67,6 @@ const ioTimer = io.of('/timer');
 
 ioTimer.on('connection', (interval) => {
   console.log('ioTimer connected');
-  interval.emit('test')
   interval.on('getDate', () => {
     interval.emit('date', new Date())
   })
